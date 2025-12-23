@@ -5,15 +5,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Quant.Helper"
         Title="Quant Helper" Height="200" Width="300" Topmost="True" AllowsTransparency="True"
-        WindowStyle="None" Background="#19F5EA74" Foreground="White">
+        WindowStyle="None" Background="#7F5D5D5D" Foreground="White">
     <Grid MouseLeftButtonDown="Window_MouseLeftButtonDown" Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <TextBlock Grid.Row="0" Text="Q" FontWeight="Bold" FontSize="25" Margin="0,-7,0,0" Foreground="#FFFFAF00"/>
-        <TextBlock Grid.Row="0" Text="uant" FontWeight="Bold" FontSize="16" Margin="20,5,0,10"/>
+
+        <TextBlock Text="Q" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,0,5" Foreground="#FFFFEA00"/>
+        <TextBlock Text="uant" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" Margin="12,0,0,5"/>
         <Button Click="Exit_Click" Content="✖" Width="30" Height="25" FontSize="16" HorizontalAlignment="Right"
             VerticalAlignment="Top" Background="Transparent" BorderBrush="Transparent" Foreground="White"
             FontWeight="Bold" ToolTip="Close"/>
