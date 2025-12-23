@@ -13,7 +13,7 @@ namespace Quant.Helper.Scripts;
 internal class ElectricScript(ILogger logger, InputSimulator input) : LoopingScriptBase(KeyCode.VcQ, "Електрик", input)
 {
     private readonly InputSimulator _input = input;
-    private readonly string _templatePath = "Assets/damaged_fuse_template.jpg";
+    private readonly string _templateResourceName = "damaged_fuse_template.jpg";
 
     protected override async Task ExecuteAsync(CancellationToken token)
     {
@@ -26,7 +26,8 @@ internal class ElectricScript(ILogger logger, InputSimulator input) : LoopingScr
         Mat? resizedScreen;
         Mat? resizedTemplate;
         List<OpenCvSharp.Point> matches = new List<OpenCvSharp.Point>();
-        using (Mat templateColor = Cv2.ImRead(_templatePath))
+        byte[] templateBytes = ResourceHelper.GetEmbeddedResource(_templateResourceName);
+        using (Mat templateColor = Cv2.ImDecode(templateBytes, ImreadModes.Color))
         {
             template = templateColor.CvtColor(ColorConversionCodes.BGR2GRAY);
             screenBmp = ElectricScript.CaptureScreen();

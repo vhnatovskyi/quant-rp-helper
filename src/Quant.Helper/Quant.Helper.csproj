@@ -29,8 +29,14 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Update="Assets\*.jpg">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		<EmbeddedResource Include="Assets\*.jpg" />
+		<EmbeddedResource Include="Assets\*.png" />
+		<None Update="Assets\icon.png">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+		<None Update="Assets\icon.ico">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
 </Project>

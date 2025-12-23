@@ -5,7 +5,6 @@ using Quant.Helper.Scripts.Abstractions;
 using SharpHook.Data;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows;
 using WindowsInput;
@@ -51,23 +50,21 @@ internal class MineScript(ILogger logger, InputSimulator input) : LoopingScriptB
         }
     }
 
-    private async Task ClickOnImage(string imagePath, CancellationToken token)
+    private async Task ClickOnImage(string imageName, CancellationToken token)
     {
         try
         {
-            string fullPath = Path.Combine("Assets", imagePath);
-
-            if (!File.Exists(fullPath))
+            if (!ResourceHelper.ResourceExists(imageName))
             {
-                logger.Log($"[{Name}]: Зображення не знайдено: {fullPath}");
+                logger.Log($"[{Name}]: Зображення не знайдено: {imageName}");
                 return;
             }
 
-            var matches = FindImageMatches(fullPath);
+            var matches = FindImageMatches(imageName);
 
             if (matches.Count > 0)
             {
-                logger.Log($"[{Name}]: Знайдено {matches.Count} збігів для {imagePath}");
+                logger.Log($"[{Name}]: Знайдено {matches.Count} збігів для {imageName}");
 
                 foreach (var match in matches)
                 {
@@ -92,20 +89,21 @@ internal class MineScript(ILogger logger, InputSimulator input) : LoopingScriptB
         }
         catch (Exception ex)
         {
-            logger.Log($"[{Name}]: Помилка при пошуку {imagePath}: {ex.Message}");
+            logger.Log($"[{Name}]: Помилка при пошуку {imageName}: {ex.Message}");
         }
     }
 
-    private List<OpenCvSharp.Point> FindImageMatches(string templatePath)
+    private List<OpenCvSharp.Point> FindImageMatches(string resourceName)
     {
         var matches = new List<OpenCvSharp.Point>();
 
         try
         {
-            using var templateColor = Cv2.ImRead(templatePath);
+            byte[] templateBytes = ResourceHelper.GetEmbeddedResource(resourceName);
+            using var templateColor = Cv2.ImDecode(templateBytes, ImreadModes.Color);
             if (templateColor.Empty())
             {
-                logger.Log($"[{Name}]: Не вдалося завантажити шаблон: {templatePath}");
+                logger.Log($"[{Name}]: Не вдалося завантажити шаблон: {resourceName}");
                 return matches;
             }
 
