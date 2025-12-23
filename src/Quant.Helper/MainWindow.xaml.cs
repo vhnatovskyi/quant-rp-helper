@@ -1,11 +1,14 @@
 ﻿using Quant.Helper.Common;
 using Quant.Helper.Scripts;
 using Quant.Helper.Scripts.Abstractions;
-using System.Collections.ObjectModel;
+using SharpHook;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Markup;
+using System.Windows.Threading;
+using WindowsInput;
+using Dispatcher = Quant.Helper.Scripts.Dispatcher;
 
 #nullable enable
 namespace Quant.Helper;
@@ -13,6 +16,7 @@ namespace Quant.Helper;
 public partial class MainWindow : Window, IComponentConnector
 {
     private readonly List<IScript> _scripts;
+    private readonly Task _dispatcherTask;
     private readonly Dispatcher _dispatcher;
     private readonly ILogger _logger;
 
@@ -20,43 +24,54 @@ public partial class MainWindow : Window, IComponentConnector
     {
         InitializeComponent();
         _logger = new Logger();
+
+        var globalHook = new SimpleGlobalHook();
+        var inputSimulator = new InputSimulator();
         var scriptList = new List<IScript>
         {
-         //  new TreeChopScript(),
-            new ElectricScript(_logger)
+            new TreeChopScript(inputSimulator),
+            new ElectricScript(_logger, inputSimulator),
+            new MineScript(_logger, inputSimulator)
         };
         _scripts = scriptList;
         ScriptList.ItemsSource = _scripts;
-        _dispatcher = new Dispatcher(_logger, _scripts);
+        _dispatcher = new Dispatcher(_logger, globalHook, _scripts);
         _dispatcher.ActiveScriptChanged += OnActiveScriptChanged;
         _dispatcher.OnScriptStopped += OnScriptStopped;
-        _logger.Messages.CollectionChanged += (_1, _2) => Dispatcher.Invoke(() =>
-        {
-            LogList.ItemsSource = new List<string>();
-            LogList.ItemsSource = _logger.Messages;
-            ListBox logList = LogList;
-            ObservableCollection<string> messages = _logger.Messages;
-            logList.ScrollIntoView(messages.LastOrDefault());
-        });
-        Task.Run(_dispatcher.RunAsync);
+        _dispatcher.OnScriptRunning += OnScriptRunning;
+
+        LogList.ItemsSource = _logger.Messages;
+        _logger.Messages.CollectionChanged += (_, __) =>
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                var last = _logger.Messages.LastOrDefault();
+                if (last != null) LogList.ScrollIntoView(last);
+            }), DispatcherPriority.Background);
+        _dispatcherTask = _dispatcher.RunAsync();
     }
 
     private async void Execute_Click(object sender, RoutedEventArgs e)
     {
         if (ScriptList.SelectedItem is IScript)
             await _dispatcher.ExecuteScriptAsync();
-        UpdateStartStopButton();
-    }
-
-    private void UpdateStartStopButton()
-    {
-        ExecuteButton.Content = ScriptList.SelectedItem is IScript selectedItem && selectedItem.IsRunning ? "Зупитини" : "Запустити";
-        _logger.Log(ExecuteButton.Content?.ToString() ?? string.Empty);
     }
 
     private void OnScriptStopped()
     {
-        Dispatcher.Invoke(UpdateStartStopButton);
+        Dispatcher.Invoke(() =>
+        {
+            if (ScriptList.SelectedItem is IScript selectedItem)
+                ExecuteButton.Content = "Запустити";
+        });
+    }
+
+    private void OnScriptRunning()
+    {
+        Dispatcher.Invoke(() =>
+        {
+            if (ScriptList.SelectedItem is IScript selectedItem)
+                ExecuteButton.Content = "Зупитини";
+        });
     }
 
     private void OnActiveScriptChanged(IScript? script)
@@ -77,15 +92,28 @@ public partial class MainWindow : Window, IComponentConnector
 
     private void ScriptList_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        ShowOrHideButton(ScriptList.SelectedItem as IScript);
+        var script = ScriptList.SelectedItem as IScript;
+        _dispatcher.SetActiveScript(script);
+        ShowOrHideButton(script);
     }
 
     private void ShowOrHideButton(IScript? script)
     {
-        _dispatcher.ActiveScript = _dispatcher.ActiveScript != script ? script : null;
-        ActiveScriptLabel.Text = _dispatcher.ActiveScript?.Name ?? "Відсутній";
-        ActionPanel.Visibility = _dispatcher.ActiveScript != null ? Visibility.Visible : Visibility.Collapsed;
+        ActiveScriptLabel.Text = script?.Name ?? "Відсутній";
+        ActionPanel.Visibility = script != null ? Visibility.Visible : Visibility.Collapsed;
     }
 
-    private void Exit_Click(object sender, RoutedEventArgs e) => Application.Current.Shutdown();
+    private async void Exit_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            await _dispatcher.StopScriptAsync();
+            _dispatcherTask?.Dispose();
+        }
+        finally
+        {
+            Application.Current.Shutdown();
+            Environment.Exit(0);
+        }
+    }
 }

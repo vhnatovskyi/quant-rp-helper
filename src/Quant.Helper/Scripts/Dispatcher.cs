@@ -7,7 +7,7 @@ namespace Quant.Helper.Scripts;
 
 internal class Dispatcher
 {
-    internal IScript? ActiveScript;
+    private IScript? _activeScript;
     private readonly IGlobalHook _hook;
     private readonly ILogger _logger;
     private readonly IEnumerable<IScript> _scripts;
@@ -15,13 +15,41 @@ internal class Dispatcher
 
     public event Action<IScript?>? ActiveScriptChanged;
     public event Action? OnScriptStopped;
-    public Dispatcher(ILogger logger, IEnumerable<IScript> scripts)
+    public event Action? OnScriptRunning;
+
+
+    internal IScript? ActiveScript
     {
-        _hook = new SimpleGlobalHook();
+        get => _activeScript;
+        set
+        {
+            SetActiveScript(value, true);
+        }
+    }
+    public Dispatcher(ILogger logger, IGlobalHook globalHook, IEnumerable<IScript> scripts)
+    {
+        _hook = globalHook;
         _logger = logger;
         _scripts = scripts;
         _hook.KeyPressed += async (_, e) => await KeyPressed_Handler(_, e);
         _hook.KeyReleased += (_, e) => KeyReleased_Handler(e);
+    }
+
+    internal void SetActiveScript(IScript? script, bool isChanged = false)
+    {
+        if (_activeScript != script)
+            _activeScript?.OnRunningEvent -= OnScriptStateChanged;
+
+        _activeScript = script;
+
+        if (_activeScript != null)
+            _activeScript.OnRunningEvent += OnScriptStateChanged;
+
+        if (isChanged)
+        {
+            ActiveScriptChanged?.Invoke(_activeScript);
+            _logger.Log("Обрано: " + (_activeScript?.Name ?? "Нічого"));
+        }
     }
 
     private async Task KeyPressed_Handler(object obj, KeyboardHookEventArgs e)
@@ -40,25 +68,11 @@ internal class Dispatcher
             {
                 if (ActiveScript != null && ActiveScript != selected)
                     await StopScriptAsync();
+
                 ActiveScript = ActiveScript == selected ? null : selected;
-                _logger.Log("Обрано: " + (ActiveScript?.Name ?? "Нічого"));
-                Action<IScript> activeScriptChanged = ActiveScriptChanged;
-                if (activeScriptChanged == null)
-                {
-                    selected = null;
-                }
-                else
-                {
-                    activeScriptChanged(ActiveScript);
-                    selected = null;
-                }
             }
-            else if (key != KeyCode.VcE)
+            else if (key != KeyCode.VcF5 || ActiveScript == null)
                 selected = null;
-            else if (ActiveScript == null)
-            {
-                selected = null;
-            }
             else
             {
                 await ExecuteScriptAsync();
@@ -69,9 +83,22 @@ internal class Dispatcher
 
     private void KeyReleased_Handler(KeyboardHookEventArgs e)
     {
-        if (e.Data.KeyCode != KeyCode.VcLeftControl && e.Data.KeyCode != KeyCode.VcRightControl)
-            return;
-        _ctrlPressed = false;
+        if (e.Data.KeyCode == KeyCode.VcLeftControl || e.Data.KeyCode == KeyCode.VcRightControl)
+            _ctrlPressed = false;
+    }
+
+    private void OnScriptStateChanged(bool isRunning)
+    {
+        if (isRunning)
+        {
+            _logger.Log($"[{ActiveScript?.Name}]: Запущено");
+            OnScriptRunning?.Invoke();
+        }
+        else
+        {
+            OnScriptStopped?.Invoke();
+            _logger.Log($"[{ActiveScript?.Name}]: Зупинено");
+        }
     }
 
     internal async Task StopScriptAsync()
@@ -79,7 +106,6 @@ internal class Dispatcher
         if (ActiveScript == null)
             return;
         await ActiveScript.StopAsync();
-        _logger.Log($"[{ActiveScript.Name}]: Зупинено");
     }
 
     internal async Task ExecuteScriptAsync()
@@ -87,13 +113,7 @@ internal class Dispatcher
         if (ActiveScript == null)
             return;
 
-        ActiveScript.RunningStateChanged += () =>
-        {
-            OnScriptStopped?.Invoke();
-        };
-
         await ActiveScript.ExecuteAsync();
-        _logger.Log($"[{ActiveScript.Name}]: " + (ActiveScript.IsRunning ? "Запущено" : "Скасовано"));
     }
 
     public async Task RunAsync() => await _hook.RunAsync();

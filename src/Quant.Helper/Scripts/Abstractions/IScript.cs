@@ -4,8 +4,7 @@ namespace Quant.Helper.Scripts.Abstractions;
 
 public interface IScript
 {
-    bool IsRunning { get; }
-    event Action? RunningStateChanged;
+    event Action<bool> OnRunningEvent;
     KeyCode SelectorKey { get; }
 
     string Name { get; }

@@ -10,13 +10,14 @@ using System.Windows;
 using WindowsInput;
 namespace Quant.Helper.Scripts;
 
-internal class ElectricScript(ILogger logger) : LoopingScriptBase(KeyCode.VcE, "Електрик")
+internal class ElectricScript(ILogger logger, InputSimulator input) : LoopingScriptBase(KeyCode.VcQ, "Електрик", input)
 {
-    private readonly InputSimulator _input = new InputSimulator();
-    private readonly string _templatePath = "damaged_fuse_template.jpg";
+    private readonly InputSimulator _input = input;
+    private readonly string _templatePath = "Assets/damaged_fuse_template.jpg";
 
     protected override async Task ExecuteAsync(CancellationToken token)
     {
+        await PressEKey(2500, token);
         await Task.Delay(2000);
         Mat? template;
         Bitmap? screenBmp;

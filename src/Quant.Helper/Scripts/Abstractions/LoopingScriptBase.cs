@@ -1,11 +1,13 @@
 ﻿using SharpHook.Data;
+using WindowsInput;
 
 namespace Quant.Helper.Scripts.Abstractions;
 
-public abstract class LoopingScriptBase(KeyCode selectorKey, string name) : IScript
+public abstract class LoopingScriptBase(KeyCode selectorKey, string name, InputSimulator input) : IScript
 {
     private readonly object _lock = new();
-    public event Action? RunningStateChanged;
+
+    public event Action<bool>? OnRunningEvent;
     private CancellationTokenSource? _cts;
     private Task? _task;
 
@@ -13,7 +15,7 @@ public abstract class LoopingScriptBase(KeyCode selectorKey, string name) : IScr
 
     public string Name => name;
 
-    public bool IsRunning => _cts != null
+    private bool IsRunning => _cts != null
                 && !_cts.IsCancellationRequested
                 && _task != null
                 && !(_task.IsCompleted || _task.IsCanceled || _task.IsFaulted);
@@ -24,6 +26,7 @@ public abstract class LoopingScriptBase(KeyCode selectorKey, string name) : IScr
         {
             if (IsRunning)
             {
+                _cts?.Cancel();
                 return;
             }
             _cts = new CancellationTokenSource();
@@ -62,22 +65,28 @@ public abstract class LoopingScriptBase(KeyCode selectorKey, string name) : IScr
                 }
             }
         }
-
-
-        RunningStateChanged?.Invoke();
+        OnRunningEvent?.Invoke(false);
     }
 
     private async Task Process(CancellationToken token)
     {
         try
         {
+            OnRunningEvent?.Invoke(true);
             await ExecuteAsync(token);
         }
         finally
         {
-            await StopAsync();
+            OnRunningEvent?.Invoke(false);
         }
     }
 
     protected abstract Task ExecuteAsync(CancellationToken token);
+
+    protected async Task PressEKey(int durationMs, CancellationToken token)
+    {
+        input.Keyboard.KeyDown(VirtualKeyCode.VK_E);
+        await Task.Delay(durationMs, token);
+        input.Keyboard.KeyUp(VirtualKeyCode.VK_E);
+    }
 }
