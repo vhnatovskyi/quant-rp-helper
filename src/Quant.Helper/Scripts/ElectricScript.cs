@@ -17,7 +17,7 @@ internal class ElectricScript(ILogger logger, InputSimulator input) : LoopingScr
 
     protected override async Task ExecuteAsync(CancellationToken token)
     {
-        await PressEKey(2500, token);
+        await PressEKey(500, token);
         await Task.Delay(2000);
         Mat? template;
         Bitmap? screenBmp;
