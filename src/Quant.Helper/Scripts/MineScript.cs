@@ -73,7 +73,7 @@ internal class MineScript(ILogger logger, InputSimulator input) : LoopingScriptB
                 {
                     if (token.IsCancellationRequested) break;
 
-                    for (int i = 0; i <= ClickCount && !token.IsCancellationRequested; i++)
+                    for (int i = 0; i < ClickCount && !token.IsCancellationRequested; i++)
                     {
                         SetCursorPos(match.X, match.Y);
                         await Task.Delay(300, token);
