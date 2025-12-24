@@ -30,7 +30,7 @@ internal class ElectricScript(ILogger logger, InputSimulator input) : LoopingScr
         using (Mat templateColor = Cv2.ImDecode(templateBytes, ImreadModes.Color))
         {
             template = templateColor.CvtColor(ColorConversionCodes.BGR2GRAY);
-            screenBmp = ElectricScript.CaptureScreen();
+            screenBmp = CaptureScreen();
             screenMat = screenBmp.ToMat();
             screenGray = screenMat.CvtColor(ColorConversionCodes.BGR2GRAY);
             resizedScreen = screenGray.Resize(new OpenCvSharp.Size(), 0.6, 0.6);
@@ -43,12 +43,12 @@ internal class ElectricScript(ILogger logger, InputSimulator input) : LoopingScr
                 for (int i = 0; i < matches.Count && !token.IsCancellationRequested; ++i)
                 {
                     OpenCvSharp.Point point = matches[i];
-                    ElectricScript.SetCursorPos((int)((double)point.X / 0.6), (int)((double)point.Y / 0.6));
+                    SetCursorPos((int)((double)point.X / 0.6), (int)((double)point.Y / 0.6));
                     ClickAt();
                     await Task.Delay(500, token);
                 }
                 logger.Log($"[{Name}]: Завершив працю");
-                ElectricScript.SetCursorPos(0, 0);
+                SetCursorPos(0, 0);
             }
             finally
             {
@@ -86,7 +86,7 @@ internal class ElectricScript(ILogger logger, InputSimulator input) : LoopingScr
                 {
                     OpenCvSharp.Point point = new(maxLoc.X + template.Width / 2, maxLoc.Y + template.Height / 2);
                     matches.Add(point);
-                    logger.Log($"[Електрий]: Знайшов: X:{point.X} Y:{point.Y}");
+                    logger.Log($"[{Name}]: Знайшов: X:{point.X} Y:{point.Y}");
                     Cv2.Rectangle(mat, new OpenCvSharp.Rect(maxLoc.X, maxLoc.Y, template.Width, template.Height), new Scalar(0.0), -1);
                 }
                 else
