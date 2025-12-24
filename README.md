@@ -1,28 +1,34 @@
 # Quant Helper
 
-Quant Helper is a WPF-based automation tool designed to assist with repetitive tasks through computer vision and input simulation. The application provides multiple automated scripts that can be triggered via keyboard shortcuts.
+Quant Helper is a WPF-based automation tool designed to assist with repetitive tasks through computer vision and input simulation on the **Quant RP Server (GTA V)**. The application provides multiple automated scripts for common roleplay activities that can be triggered via keyboard shortcuts.
+
+## Overview
+
+This tool is specifically designed for automating routine activities on the Quant RP Server, helping players with repetitive tasks such as electrical work, mining, and tree chopping. Each script uses advanced computer vision to detect game elements and perform automated interactions, making roleplay activities more efficient and enjoyable.
 
 ## Features
 
 ### Automation Scripts
 
-The application includes several specialized automation scripts:
+The application includes several specialized automation scripts for Quant RP activities:
 
 - **🔌 Electric Script (Електрик)** - `Ctrl + Q` to select
+  - Automates electrical repair work on the Quant RP Server
   - Uses OpenCV template matching to detect damaged fuse elements
   - Automatically clicks on detected elements with configurable precision
   - Supports screen scaling and filtering of overlapping detection points
 
 - **⛏️ Mine Script (Каменяр)** - `Ctrl + U` to select
+  - Automates mining activities on the Quant RP Server
   - Multi-template stone detection using computer vision
   - Detects 4 different stone types from embedded image resources
   - Performs automated clicking with movement patterns
   - Includes smart filtering to avoid duplicate clicks on the same targets
 
 - **🌳 Tree Chop Script (Лісоруб)** - `Ctrl + T` to select
-  - Automated tree chopping simulation
-  - Performs repetitive mouse clicking patterns
-  - Configurable timing and click sequences
+  - Automates tree chopping/lumberjack activities on the Quant RP Server
+  - Performs repetitive mouse clicking patterns for tree harvesting
+  - Configurable timing and click sequences optimized for roleplay activities
 
 **Note**: Use `F5` to execute any selected script.
 
@@ -110,4 +116,13 @@ The application is configured for:
 
 ## Safety and Considerations
 
-This tool is designed for automation tasks and should be used responsibly. Ensure compliance with any applicable terms of service for applications where this automation is used.
+This tool is designed for automation tasks on the **Quant RP Server (GTA V)** and should be used responsibly within the server's rules and guidelines. 
+
+### Important Notes:
+- **Server Compliance**: Ensure that the use of automation tools is permitted by the Quant RP Server rules
+- **Fair Play**: Use responsibly to enhance your roleplay experience without disrupting others
+- **Terms of Service**: Always comply with GTA V's and the server's terms of service
+- **Moderation**: Be mindful of your activity patterns to maintain a natural roleplay experience
+
+### Disclaimer:
+Users are responsible for ensuring compliance with all applicable server rules, game terms of service, and local regulations. The developers of this tool are not responsible for any consequences resulting from its use.
