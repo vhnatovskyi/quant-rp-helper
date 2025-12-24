@@ -2,6 +2,12 @@
 
 Quant Helper is a WPF-based automation tool designed to assist with repetitive tasks through computer vision and input simulation on the **Quant RP Server (GTA V)**. The application provides multiple automated scripts for common roleplay activities that can be triggered via keyboard shortcuts.
 
+## Download
+
+📥 **[Download Latest Release (v1.0.0)](https://github.com/vhnatovskyi/Quant.Helper/releases/tag/v1.0.0)**
+
+Get the latest version of Quant Helper from the official GitHub releases page. The download includes a self-contained executable with all dependencies bundled.
+
 ## Overview
 
 This tool is specifically designed for automating routine activities on the Quant RP Server, helping players with repetitive tasks such as electrical work, mining, and tree chopping. Each script uses advanced computer vision to detect game elements and perform automated interactions, making roleplay activities more efficient and enjoyable.
