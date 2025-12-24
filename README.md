@@ -8,18 +8,18 @@ Quant Helper is a WPF-based automation tool designed to assist with repetitive t
 
 The application includes several specialized automation scripts:
 
-- **?? Electric Script (????????)** - `Ctrl + Q` to select
+- **🔌 Electric Script (Електрик)** - `Ctrl + Q` to select
   - Uses OpenCV template matching to detect damaged fuse elements
   - Automatically clicks on detected elements with configurable precision
   - Supports screen scaling and filtering of overlapping detection points
 
-- **?? Mine Script (???????)** - `Ctrl + U` to select
+- **⛏️ Mine Script (Каменяр)** - `Ctrl + U` to select
   - Multi-template stone detection using computer vision
   - Detects 4 different stone types from embedded image resources
   - Performs automated clicking with movement patterns
   - Includes smart filtering to avoid duplicate clicks on the same targets
 
-- **?? Tree Chop Script (???????)** - `Ctrl + T` to select
+- **🌳 Tree Chop Script (Лісоруб)** - `Ctrl + T` to select
   - Automated tree chopping simulation
   - Performs repetitive mouse clicking patterns
   - Configurable timing and click sequences
