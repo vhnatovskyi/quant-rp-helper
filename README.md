@@ -86,7 +86,7 @@ The application is configured for:
      - `Ctrl + T` - Select Tree chopping automation
 3. **Execute the selected script**:
    - **`F5`** - Start/Execute the currently selected script
-   - **GUI Button** - Click "?????????" (Start) button in the interface
+   - **GUI Button** - Click "Запустити" (Start) button in the interface
 4. **Monitor execution**:
    - Watch the real-time logging output for script status and results
    - Script status is displayed in the interface
