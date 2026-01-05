@@ -9,6 +9,7 @@
 		<ApplicationIcon>Assets\icon.ico</ApplicationIcon>
 		<Copyright>© Atska 2025</Copyright>
 		<PackageIcon>icon.png</PackageIcon>
+		<Version>1.0.2</Version>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
 
 		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
