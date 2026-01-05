@@ -41,7 +41,8 @@ public partial class MainWindow : Window, IComponentConnector
         {
             new TreeChopScript(_inputSimulator),
             new ElectricScript(_logger, _inputSimulator),
-            new MineScript(_logger, _inputSimulator)
+            new MineScript(_logger, _inputSimulator),
+            new SnowBallScript(_inputSimulator)
         };
         _scripts = scriptList;
         ScriptList.ItemsSource = _scripts;

@@ -36,6 +36,11 @@ The application includes several specialized automation scripts for Quant RP act
   - Performs repetitive mouse clicking patterns for tree harvesting
   - Configurable timing and click sequences optimized for roleplay activities
 
+- **❄️ SnowBall Script (Сніжки)** - `Ctrl + O` to select
+  - Automates snowball throwing activities on the Quant RP Server
+  - Continuously performs interaction patterns for snowball gameplay
+  - Simple loop-based automation for winter event activities
+
 **Note**: Use `F5` to execute any selected script.
 
 ### Technical Features
@@ -96,6 +101,7 @@ The application is configured for:
      - `Ctrl + Q` - Select Electric automation
      - `Ctrl + U` - Select Mining automation  
      - `Ctrl + T` - Select Tree chopping automation
+     - `Ctrl + O` - Select SnowBall automation
 3. **Execute the selected script**:
    - **`F5`** - Start/Execute the currently selected script
    - **GUI Button** - Click "Запустити" (Start) button in the interface
